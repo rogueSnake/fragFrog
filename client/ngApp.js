@@ -1,10 +1,8 @@
-fragFrog.socket = io();
-console.log("Defining socket: ");
-console.log(fragFrog.socket);
+var socket = require('./socketHandler.js');
 
-fragFrog.app = angular.module("app", []);
+var app = angular.module("app", []);
 
-fragFrog.app.controller("appCtrl", function ($scope) {
+app.controller("appCtrl", function ($scope) {
     var i = 0,
         unsyncedRow =  {
             columnA: " ",
@@ -18,17 +16,17 @@ fragFrog.app.controller("appCtrl", function ($scope) {
         $scope.grid.push(Object.create(unsyncedRow));
     }
 
-    fragFrog.socket.emit("requestGrid");
-    fragFrog.socket.on("broadcastGrid", function (grid) {
+    socket.emit("requestGrid");
+    socket.on("broadcastGrid", function (grid) {
         $scope.grid = grid;
         $scope.$apply();
     });
 
     $scope.tapSquare = function (column, row) {
-        fragFrog.socket.emit("requestChange", {x: column, y: row});
+        socket.emit("requestChange", {x: column, y: row});
     };
 
-    fragFrog.socket.on("broadcastChange", function(position) {
+    socket.on("broadcastChange", function(position) {
         var row = position.y,
             column = position.x,
             setGrid = function (symbol) {

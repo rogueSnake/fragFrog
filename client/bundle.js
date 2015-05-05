@@ -1,3 +1,4 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var socket = require('./socketHandler.js');
 
 var spriteContainer = {
@@ -119,3 +120,86 @@ socket.on("newCharacter", function (character) {
             sprite);
  
 });
+
+},{"./socketHandler.js":5}],2:[function(require,module,exports){
+var gameWorld = require('./gameWorld.js'),
+    ngApp = require('./ngApp.js'),
+    inputHandling = require('./inputHandling.js');
+
+
+},{"./gameWorld.js":1,"./inputHandling.js":3,"./ngApp.js":4}],3:[function(require,module,exports){
+var keypressListener = new window.keypress.Listener();
+
+keypressListener.simple_combo("up", function(){
+    console.log("UP!");
+    fragFrog.socket.emit("makeMove", "up");
+});
+
+keypressListener.simple_combo("down", function(){
+
+});
+
+keypressListener.simple_combo("left", function(){
+
+});
+
+keypressListener.simple_combo("right", function(){
+
+});
+
+},{}],4:[function(require,module,exports){
+var socket = require('./socketHandler.js');
+
+var app = angular.module("app", []);
+
+app.controller("appCtrl", function ($scope) {
+    var i = 0,
+        unsyncedRow =  {
+            columnA: " ",
+            columnB: " ",
+            columnC: " "
+        };
+
+    $scope.grid = [];
+
+    for (i = 0; i < 3; i += 1) {
+        $scope.grid.push(Object.create(unsyncedRow));
+    }
+
+    socket.emit("requestGrid");
+    socket.on("broadcastGrid", function (grid) {
+        $scope.grid = grid;
+        $scope.$apply();
+    });
+
+    $scope.tapSquare = function (column, row) {
+        socket.emit("requestChange", {x: column, y: row});
+    };
+
+    socket.on("broadcastChange", function(position) {
+        var row = position.y,
+            column = position.x,
+            setGrid = function (symbol) {
+                $scope.grid[row][column] = symbol;
+                $scope.$apply();
+            };
+
+        switch ($scope.grid[row][column]) {
+            case "_" :
+                setGrid("x");
+                break;
+            case "x" :
+                setGrid("o");
+                break;
+            case "o" :
+                setGrid("_");
+                break;
+        }
+    });
+});
+
+},{"./socketHandler.js":5}],5:[function(require,module,exports){
+module.exports = io();
+
+
+},{}]},{},[2]);
