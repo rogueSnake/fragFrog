@@ -1,18 +1,19 @@
-var keypressListener = new window.keypress.Listener();
+var socket = require('./socketHandler.js'),
+    keypressListener = new window.keypress.Listener();
 
-keypressListener.simple_combo("up", function(){
+keypressListener.simple_combo("up", function () {
     console.log("UP!");
-    fragFrog.socket.emit("makeMove", "up");
+    socket.emit("makeMove", "up");
 });
 
-keypressListener.simple_combo("down", function(){
-
-});
-
-keypressListener.simple_combo("left", function(){
+keypressListener.simple_combo("down", function () {
 
 });
 
-keypressListener.simple_combo("right", function(){
+keypressListener.simple_combo("left", function () {
+
+});
+
+keypressListener.simple_combo("right", function () {
 
 });

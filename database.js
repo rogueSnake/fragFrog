@@ -1,3 +1,41 @@
+var mongoClient = require('mongodb').MongoClient,
+    db;
+
+mongoClient.connect('mongodb://localhost:8000/playerDatabase', function (error, database) {
+
+    if (error) {
+        return console.log(error);
+    }
+    db = database;
+});
+
+addPlayer = function (player, callback) {
+    db.collection('players').insert(player, callback || function () {});
+};
+
+getPlayers = function (callback) {
+    db.collection('players').find(function (error, cursor) {
+
+        if (error) {
+            return callback(error);
+        }
+        cursor.toArray(function (error, players) {
+
+            if (error) {
+                return callback(error);
+            }
+            callback(null, players);
+        });
+    });
+};
+
+module.exports = {
+    getPlayers : getPlayers,
+    addPlayer : addPlayer
+};
+
+/*
+
 var rowIds = [],
     mongoClient = require('mongodb').MongoClient,
     connect = function (callback) {
@@ -34,15 +72,15 @@ connect(function (grid) {
 
 module.exports = {
 
-    getGrid : function (callback) {
-        connect(function (grid) {
-            grid.find(function (err, cursor) {
+    getPlayers : function (callback) {
+        connect(function (playerCollection) {
+            playerCollection.find(function (err, cursor) {
 
                 if (err) {throw err}
-                cursor.toArray(function (err, rows) {
+                cursor.toArray(function (err, players) {
 
                     if (err) {throw err}
-                    callback(rows);
+                    callback(players);
                 });
             });
         });
@@ -79,4 +117,4 @@ module.exports = {
         });
     }
 };
-
+*/
