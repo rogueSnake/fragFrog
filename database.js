@@ -9,6 +9,10 @@ mongoClient.connect('mongodb://localhost:8000/playerDatabase', function (error, 
     db = database;
 });
 
+checkLoading = function () {
+    return !!db;
+};
+
 addPlayer = function (player, callback) {
     db.collection('players').insert(player, callback || function () {});
 };
@@ -30,6 +34,7 @@ getPlayers = function (callback) {
 };
 
 module.exports = {
+    checkLoading : checkLoading,
     getPlayers : getPlayers,
     addPlayer : addPlayer
 };
